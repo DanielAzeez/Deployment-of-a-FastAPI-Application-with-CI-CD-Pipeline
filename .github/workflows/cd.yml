@@ -25,14 +25,11 @@ jobs:
           docker build -t ${{ secrets.DOCKER_USERNAME }}/fastapi-app:latest .
           docker push ${{ secrets.DOCKER_USERNAME }}/fastapi-app:latest
 
-      - name: Deploy to Server
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SERVER_IP }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            docker pull ${{ secrets.DOCKER_USERNAME }}/fastapi-app:latest
-            docker stop fastapi-app || true
-            docker rm fastapi-app || true
-            docker run -d --name fastapi-app -p 8000:8000 --restart unless-stopped ${{ secrets.DOCKER_USERNAME }}/fastapi-app:latest
+      - name: Deploy using SSH
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa_github ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+          docker pull ${{ secrets.DOCKER_USERNAME }}/fastapi-app:latest
+          docker stop fastapi-app || true
+          docker rm fastapi-app || true
+          docker run -d --name fastapi-app -p 8000:8000 --restart unless-stopped ${{ secrets.DOCKER_USERNAME }}/fastapi-app:latest
+          EOF
