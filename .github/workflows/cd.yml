@@ -28,14 +28,14 @@ jobs:
       - name: Set up SSH key
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa_github
-          chmod 600 ~/.ssh/id_rsa_github
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
 
-      - name: Deploy using SSH
+      - name: Deploy to server
         run: |
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa_github ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-          docker pull ${{ secrets.DOCKER_USERNAME }}/fastapi-app:latest
-          docker stop fastapi-app || true
-          docker rm fastapi-app || true
-          docker run -d --name fastapi-app -p 8000:8000 --restart unless-stopped ${{ secrets.DOCKER_USERNAME }}/fastapi-app:latest
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+          sudo docker pull ${{ secrets.DOCKER_USERNAME }}/fastapi-app:latest
+          sudo docker stop fastapi-app || true
+          sudo docker rm fastapi-app || true
+          sudo docker run -d --name fastapi-app -p 8000:8000 ${{ secrets.DOCKER_USERNAME }}/fastapi-app:latest
           EOF
