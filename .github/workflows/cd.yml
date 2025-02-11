@@ -25,6 +25,12 @@ jobs:
           docker build -t ${{ secrets.DOCKER_USERNAME }}/fastapi-app:latest .
           docker push ${{ secrets.DOCKER_USERNAME }}/fastapi-app:latest
 
+      - name: Set up SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa_github
+          chmod 600 ~/.ssh/id_rsa_github
+
       - name: Deploy using SSH
         run: |
           ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa_github ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
