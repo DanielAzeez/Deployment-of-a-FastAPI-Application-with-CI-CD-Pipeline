@@ -37,10 +37,10 @@ jobs:
         run: |
           ssh -vvv -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} exit
 
-      - name: Add SSH private key
+      - name: Add SSH private key (Base64 Decoded)
         run: |
          mkdir -p ~/.ssh
-         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+         echo "${{ secrets.SSH_PRIVATE_KEY_B64 }}" | base64 --decode > ~/.ssh/id_rsa
          chmod 600 ~/.ssh/id_rsa
 
       - name: Add SSH known hosts 
@@ -49,9 +49,10 @@ jobs:
 
       - name: Deploy to server
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no ec2-user@ec2-13-51-196-216.eu-north-1.compute.amazonaws.com << 'EOF'
           sudo docker pull ${{ secrets.DOCKER_USERNAME }}/fastapi-app:latest
           sudo docker stop fastapi-app || true
           sudo docker rm fastapi-app || true
           sudo docker run -d --name fastapi-app -p 8000:8000 ${{ secrets.DOCKER_USERNAME }}/fastapi-app:latest
           EOF
+
