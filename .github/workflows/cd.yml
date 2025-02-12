@@ -38,7 +38,7 @@ jobs:
 
       - name: Add SSH known hosts (from secret)
         run: |
-          echo "${{ secrets.KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+          echo "${{ secrets.KNOWN_HOSTS }}" > ~/.ssh/known_hosts || true
 
       - name: Deploy to server
         run: |
