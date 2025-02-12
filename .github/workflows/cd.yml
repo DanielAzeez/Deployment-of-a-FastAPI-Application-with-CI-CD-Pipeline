@@ -36,9 +36,9 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY_B64 }}" | base64 --decode > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
-      - name: Add SSH known hosts (from secret)
-        run: |
-          echo "${{ secrets.KNOWN_HOSTS }}" > ~/.ssh/known_hosts || true
+     # - name: Add SSH known hosts (from secret)
+      #  run: |
+       #   echo "${{ secrets.KNOWN_HOSTS }}" > ~/.ssh/known_hosts || true
 
       - name: Deploy to server
         run: |
