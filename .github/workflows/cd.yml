@@ -16,7 +16,7 @@ jobs:
         uses: docker/setup-buildx-action@v2
 
       - name: Build Docker images
-        run: docker build -t fastapi-app:latest.
+        run: docker build -t fastapi-app:latest .
 
       - name: Tag Docker Images
         run: docker tag fastapi-app:latest ${{ secrets.DOCKER_USERNAME }}/fastapi-app:latest
