@@ -32,6 +32,10 @@ jobs:
       - name: "Push to Docker Hub"
         run: |
           docker push ${{ secrets.DOCKER_USERNAME }}/fastapi-app:latest
+                
+      - name: Debug SSH Connection
+        run: |
+          ssh -vvv -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} exit
 
       - name: Add SSH private key
         run: |
@@ -41,7 +45,7 @@ jobs:
 
       - name: Add SSH known hosts 
         run: |
-         ssh-keyscan -t rsa ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+         ssh-keyscan -t rsa ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts || true
 
       - name: Deploy to server
         run: |
