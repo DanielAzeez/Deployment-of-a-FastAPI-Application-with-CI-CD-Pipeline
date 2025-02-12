@@ -36,18 +36,15 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY_B64 }}" | base64 --decode > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
-     # - name: Add SSH known hosts (from secret)
-      #  run: |
-       #   echo "${{ secrets.KNOWN_HOSTS }}" > ~/.ssh/known_hosts || true
+      - name: Add SSH known hosts #
+        run: |
+         ssh-keyscan -t rsa ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
 
       - name: Deploy to server
         run: |
-          ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} "
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/fastapi-app:latest
-            sudo docker stop fastapi-app || true
-            sudo docker rm fastapi-app || true
-            sudo docker run -d --name fastapi-app -p 8000:8000 ${{ secrets.DOCKER_USERNAME }}/fastapi-app:latest
-          "
-
-      # - name: Debug SSH Connection (Remove in production!)
-      #   run: ssh -vvv ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} exit  # Remove StrictHostKeyChecking
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+          sudo docker pull ${{ secrets.DOCKER_USERNAME }}/fastapi-app:latest
+          sudo docker stop fastapi-app || true
+          sudo docker rm fastapi-app || true
+          sudo docker run -d --name fastapi-app -p 8000:8000 ${{ secrets.DOCKER_USERNAME }}/fastapi-app:latest
+          EOF
