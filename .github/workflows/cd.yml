@@ -33,3 +33,8 @@ jobs:
             sudo docker stop fastapi-app || true
             sudo docker rm fastapi-app || true
             sudo docker run -d --name fastapi-app -p 8000:8000 --restart unless-stopped ${{ secrets.DOCKER_USERNAME }}/fastapi-app:latest
+
+      - name: Debug SSH Connection
+        run: |
+          ssh -o StrictHostKeyChecking=no -vvv -i ~/.ssh/id_rsa_github ec2-user@${{ secrets.SERVER_IP }} exit
+
