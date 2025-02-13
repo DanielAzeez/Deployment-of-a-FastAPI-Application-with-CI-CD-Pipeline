@@ -44,8 +44,7 @@ jobs:
 
       - name: Deploy to server
         run: |
-          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i "DannyKey.pem" ec2-user@13.60.104.52
-          ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i "DannyKey.pem" ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
           sudo docker pull ${{ secrets.DOCKER_USERNAME }}/fastapi-app:latest
           sudo docker stop fastapi-app || true
           sudo docker rm fastapi-app || true
